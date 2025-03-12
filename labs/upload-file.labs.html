@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload File</title>
+</head>
+
+<body>
+    <h2>Upload File</h2>
+    <input type="file" id="fileInput">
+    <button onclick="uploadFile()">Upload</button>
+    <div id="status"></div>
+
+    <script>
+        async function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const statusDiv = document.getElementById('status');
+
+            if (!fileInput.files.length) {
+                statusDiv.textContent = 'Vui lòng chọn file để upload';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('upload', fileInput.files[0]);
+            // formData.append('contextId', 'VGpXGOJO6i3AuBc4PYTS');
+
+            try {
+                const response = await fetch('http://localhost:8080/api/upload-file', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    statusDiv.textContent = 'Upload thành công!';
+                } else {
+                    statusDiv.textContent = 'Upload thất bại: ' + result.message;
+                }
+            } catch (error) {
+                statusDiv.textContent = 'Lỗi: ' + error.message;
+            }
+        }
+    </script>
+</body>
+
+</html>

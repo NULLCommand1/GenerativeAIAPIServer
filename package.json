@@ -1,0 +1,30 @@
+{
+  "name": "codespaces-blank",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon app.js",
+    "deploy": "ssh -R public-openfxt:80:localhost:8080 serveo.net"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "connect-timeout": "^1.9.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.1",
+    "mariadb": "^3.4.0",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.11.4",
+    "sequelize": "^6.37.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7",
+    "sequelize-cli": "^6.6.2",
+    "webpack": "^5.96.1",
+    "webpack-cli": "^5.1.4"
+  }
+}

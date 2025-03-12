@@ -1,0 +1,16 @@
+{
+  "development": {
+    "username": "user",
+    "password": "password",
+    "database": "mydb",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "386168",
+    "password": "NULLCommand1.HashPassword@",
+    "database": "genai-openfxt_db",
+    "host": "mysql-genai-openfxt.alwaysdata.net",
+    "dialect": "mariadb"
+  }
+}
