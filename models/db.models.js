@@ -9,8 +9,26 @@ const config = require(path.join(__dirname, '/../config/database.config.json'))[
 const db = {};
 
 const sequelize = config.use_env_variable 
-  ? new Sequelize(process.env[config.use_env_variable], { ...config, logging: false })
-  : new Sequelize(config.database, config.username, config.password, { ...config, logging: false });
+  ? new Sequelize(process.env[config.use_env_variable], { 
+      ...config, 
+      logging: false,
+      pool: {
+        max: 20,
+        min: 5,
+        idle: 10000,
+        acquire: 30000
+      }
+    })
+  : new Sequelize(config.database, config.username, config.password, { 
+      ...config, 
+      logging: false,
+      pool: {
+        max: 20,
+        min: 5,
+        idle: 10000,
+        acquire: 30000
+      }
+    });
 
 fs.readdirSync(__dirname)
   .filter(file => (

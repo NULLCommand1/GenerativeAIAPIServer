@@ -3,6 +3,8 @@ const { GoogleAIFileManager } = require("@google/generative-ai/server");
 const db = require('../models/db.models');
 const path = require('path');
 const { NULL_AI_PROMPT } = require('../constants/main.constants');
+const NodeCache = require('node-cache');
+const responseCache = new NodeCache({ stdTTL: 300 });
 
 const tryGenerateWithKey = async (apiKey, modelAI, prompt, contextID, req) => {
     const genAI = new GoogleGenerativeAI(apiKey);
@@ -102,7 +104,18 @@ const tryWithMultipleKeys = async (prompt, modelAI, contextID, req) => {
 
 const genService = {
     getAIGenerateWithContext: async (prompt, contextID, modelAI, req) => {
-        return tryWithMultipleKeys(prompt, modelAI, contextID, req);
+        const cacheKey = `${contextID}_${prompt}_${modelAI}`;
+        const cachedResponse = responseCache.get(cacheKey);
+        
+        if (cachedResponse) {
+            return cachedResponse;
+        }
+        
+        const response = await tryWithMultipleKeys(prompt, modelAI, contextID, req);
+        
+        responseCache.set(cacheKey, response);
+        
+        return response;
     }
 };
 

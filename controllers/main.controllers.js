@@ -1,6 +1,7 @@
 const genService = require('../services/gen.services');
 const { normalizeModelAI } = require('../helpers/main.helpers');
 const contextService = require('../services/context.services');
+const contextLockService = require('../services/context-lock.services');
 
 const mainController = {
     aiGenerate: async (req, res) => {
@@ -15,6 +16,7 @@ const mainController = {
             }
 
             const normalizedModelAI = normalizeModelAI(model);
+            
             if (!normalizedModelAI) {
                 return res.status(400).json({ 
                     success: false, 
@@ -23,19 +25,35 @@ const mainController = {
             }
 
             const validContextId = contextId && contextId.length === 20 ? contextId : await contextService.generateContextId();
-
-            const response = await genService.getAIGenerateWithContext(prompt, validContextId, normalizedModelAI, req);
-
-            if (!res.headersSent) {
-                return res.status(200).json({ 
-                    success: true, 
-                    message: 'Success', 
-                    text: response,
-                    contextId: validContextId
+            if (contextId && contextLockService.isLocked(validContextId)) {
+                return res.status(409).json({
+                    success: false,
+                    message: 'Context is being used, please try again later'
                 });
+            }
+            
+            contextLockService.acquireLock(validContextId);
+            
+            try {
+                const response = await genService.getAIGenerateWithContext(prompt, validContextId, normalizedModelAI, req);
+
+                if (!res.headersSent) {
+                    return res.status(200).json({ 
+                        success: true, 
+                        message: 'Success', 
+                        text: response,
+                        contextId: validContextId
+                    });
+                }
+            } finally {
+                contextLockService.releaseLock(validContextId);
             }
 
         } catch (error) {
+            if (req.body.contextId) {
+                contextLockService.releaseLock(req.body.contextId);
+            }
+            
             if (!res.headersSent) {
                 return res.status(500).json({ 
                     success: false, 
