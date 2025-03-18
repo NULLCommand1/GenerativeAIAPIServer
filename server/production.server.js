@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const timeout = require('connect-timeout');
-const { IP_ALWAYS_DATA, PORT_ALWAYS_DATA } = require('./constants/main.constants');
+const { IP_ALWAYS_DATA, PORT_ALWAYS_DATA } = require('../constants/main.constants');
 const mainRoutes = require('../routes/main.routes');
 const db = require('../models/db.models');
 const { errorHandlingMiddleware, expressJsonMiddleware } = require('../middlewares/main.middlewares');
