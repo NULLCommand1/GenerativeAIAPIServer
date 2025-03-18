@@ -1,24 +1,14 @@
-const NodeCache = require('node-cache');
-
-// Cache lưu trữ thông tin về các context đang bị khóa
-// Thiết lập TTL (time-to-live) là 3 phút để tự động giải phóng nếu có lỗi
-const contextLockCache = new NodeCache({ stdTTL: 180 });
-
 const contextLockService = {
-    acquireLock: (contextId) => {
-        if (contextLockCache.has(contextId)) {
-            return false; // Context đã bị khóa
-        }
-        contextLockCache.set(contextId, true);
-        return true;
+    acquireLock: async (contextId) => {
+        return await global.contextLockService.acquireLock(contextId);
     },
 
-    releaseLock: (contextId) => {
-        contextLockCache.del(contextId);
+    releaseLock: async (contextId) => {
+        return await global.contextLockService.releaseLock(contextId);
     },
 
-    isLocked: (contextId) => {
-        return contextLockCache.has(contextId);
+    isLocked: async (contextId) => {
+        return await global.contextLockService.isLocked(contextId);
     }
 };
 

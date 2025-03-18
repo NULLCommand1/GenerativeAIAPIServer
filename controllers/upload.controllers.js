@@ -34,7 +34,8 @@ const uploadController = {
                     });
                 }
 
-                if (contextLockService.isLocked(req.body.contextId)) {
+                const isLocked = await contextLockService.isLocked(req.body.contextId);
+                if (isLocked) {
                     return res.status(409).json({
                         success: false,
                         message: 'Context is being used, please try again later'
@@ -46,7 +47,7 @@ const uploadController = {
                 validContextId = await contextService.generateContextId();
             }
 
-            contextLockService.acquireLock(validContextId);
+            await contextLockService.acquireLock(validContextId);
 
             try {
                 const success = await fileService.addDataToDatabase(validContextId, req.fileUploadedPath, req.file.mimetype);
@@ -63,11 +64,11 @@ const uploadController = {
                     contextId: validContextId
                 });
             } finally {
-                contextLockService.releaseLock(validContextId);
+                await contextLockService.releaseLock(validContextId);
             }
         } catch (err) {
             if (validContextId) {
-                contextLockService.releaseLock(validContextId);
+                await contextLockService.releaseLock(validContextId);
             }
             
             res.status(500).json({

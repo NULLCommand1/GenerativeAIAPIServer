@@ -25,14 +25,14 @@ const mainController = {
             }
 
             const validContextId = contextId && contextId.length === 20 ? contextId : await contextService.generateContextId();
-            if (contextId && contextLockService.isLocked(validContextId)) {
+            if (contextId && await contextLockService.isLocked(validContextId)) {
                 return res.status(409).json({
                     success: false,
                     message: 'Context is being used, please try again later'
                 });
             }
             
-            contextLockService.acquireLock(validContextId);
+            await contextLockService.acquireLock(validContextId);
             
             try {
                 const response = await genService.getAIGenerateWithContext(prompt, validContextId, normalizedModelAI, req);
@@ -46,12 +46,12 @@ const mainController = {
                     });
                 }
             } finally {
-                contextLockService.releaseLock(validContextId);
+                await contextLockService.releaseLock(validContextId);
             }
 
         } catch (error) {
             if (req.body.contextId) {
-                contextLockService.releaseLock(req.body.contextId);
+                await contextLockService.releaseLock(req.body.contextId);
             }
             
             if (!res.headersSent) {
