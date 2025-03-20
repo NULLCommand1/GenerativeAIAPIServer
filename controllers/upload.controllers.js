@@ -16,6 +16,7 @@ const uploadController = {
             });
         }
 
+        let validContextId;
         try {
             await new Promise((resolve, reject) => {
                 uploadMiddleware(req, res, (err) => {
@@ -24,7 +25,6 @@ const uploadController = {
                 });
             });
 
-            let validContextId;
             if (req.body.contextId) {
                 const contextIdExists = await contextService.contextIdExists(req.body.contextId);
                 if (!contextIdExists) {
