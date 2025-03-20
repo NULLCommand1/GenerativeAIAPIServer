@@ -11,7 +11,9 @@ module.exports = (sequelize, DataTypes) => {
     contextId: DataTypes.STRING,
     role: DataTypes.STRING,
     index: DataTypes.INTEGER,
-    content: DataTypes.TEXT
+    content: DataTypes.TEXT,
+    createdAt: DataTypes.DATE,
+    updatedAt: DataTypes.DATE
   }, {
     sequelize,
     modelName: 'ChatMessages',

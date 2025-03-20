@@ -50,18 +50,19 @@ const uploadController = {
             await contextLockService.acquireLock(validContextId);
 
             try {
-                const success = await fileService.addDataToDatabase(validContextId, req.fileUploadedPath, req.file.mimetype);
-                if (!success) {
+                const result = await fileService.addDataToDatabase(validContextId, req.fileUploadedPath, req.file.mimetype);
+                if (!result.success) {
                     return res.status(500).json({
                         success: false,
-                        message: 'Failed to upload file'
+                        message: 'Failed to upload file: ' + result.error
                     });
                 }
 
                 res.status(200).json({
                     success: true,
                     message: 'Successfully uploaded file',
-                    contextId: validContextId
+                    contextId: validContextId,
+                    timestamp: result.timestamp
                 });
             } finally {
                 await contextLockService.releaseLock(validContextId);

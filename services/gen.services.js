@@ -4,6 +4,7 @@ const db = require('../models/db.models');
 const path = require('path');
 const { NULL_AI_PROMPT } = require('../constants/main.constants');
 const responseCacheService = require('./response-cache.services');
+const moment = require('moment-timezone');
 
 const tryGenerateWithKey = async (apiKey, modelAI, prompt, contextID, req) => {
     const genAI = new GoogleGenerativeAI(apiKey);
@@ -66,13 +67,14 @@ const tryGenerateWithKey = async (apiKey, modelAI, prompt, contextID, req) => {
             throw new Error('Request timeout during processing');
         }
 
+        let createAt = moment.tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD HH:mm:ss");
         await db.ChatMessages.bulkCreate([
-            { contextId: contextID, content: prompt, role: 'user', index: contextRecords.length + 1 },
-            { contextId: contextID, content: result.response.text(), role: 'model', index: contextRecords.length + 2 }
+            { contextId: contextID, content: prompt, role: 'user', index: contextRecords.length + 1, createdAt: createAt, updatedAt: createAt },
+            { contextId: contextID, content: result.response.text(), role: 'model', index: contextRecords.length + 2, createdAt: createAt, updatedAt: createAt }
         ], { transaction });
 
         await transaction.commit();
-        return result.response.text();
+        return { text: result.response.text(), timestamp: createAt };
     } catch (error) {
         console.log(error);
         await transaction.rollback();

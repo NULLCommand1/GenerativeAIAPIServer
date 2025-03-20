@@ -1,5 +1,5 @@
 const db = require('../models/db.models');
-
+const moment = require('moment-timezone');
 const fileService = {
     addDataToDatabase: async (contextId, filePathOnServer, fileMimeType) => {
         const validMimeTypes = new Set(['application/pdf', 'image/png', 'image/jpeg']);
@@ -9,12 +9,13 @@ const fileService = {
 
         const transaction = await db.sequelize.transaction();
         try {
-            await db.Files.create({ contextId, filePath: filePathOnServer, fileMimeType }, { transaction });
+            let createAt = moment.tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD HH:mm:ss");
+            await db.Files.create({ contextId, filePath: filePathOnServer, fileMimeType, createdAt: createAt, updatedAt: createAt }, { transaction });
             await transaction.commit();
-            return true;
+            return { success: true, timestamp: createAt };
         } catch (error) {
             await transaction.rollback();
-            return false;
+            return { success: false, error: error.message };
         }
     }
 };

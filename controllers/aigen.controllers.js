@@ -41,7 +41,8 @@ const mainController = {
                     return res.status(200).json({ 
                         success: true, 
                         message: 'Success', 
-                        text: response,
+                        text: response.text,
+                        timestamp: response.timestamp,
                         contextId: validContextId
                     });
                 }
