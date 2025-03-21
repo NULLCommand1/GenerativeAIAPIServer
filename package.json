@@ -1,7 +1,6 @@
 {
-  "name": "codespaces-blank",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "openfxt-generative-ai-api",
+  "version": "2.0.0",
   "scripts": {
     "dev": "nodemon app.js",
     "deploy": "ssh -R public-openfxt:80:localhost:8080 serveo.net"

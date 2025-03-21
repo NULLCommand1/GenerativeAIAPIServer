@@ -11,7 +11,8 @@ const mainController = {
             if (!prompt || !model) {
                 return res.status(400).json({ 
                     success: false, 
-                    message: 'Prompt and model are required' 
+                    message: 'Prompt and model are required',
+                    error: 'Prompt and model are required'
                 });
             }
 
@@ -20,7 +21,8 @@ const mainController = {
             if (!normalizedModelAI) {
                 return res.status(400).json({ 
                     success: false, 
-                    message: 'Invalid modelAI' 
+                    message: 'Invalid modelAI',
+                    error: 'Invalid modelAI'
                 });
             }
 
@@ -28,7 +30,8 @@ const mainController = {
             if (contextId && await contextLockService.isLocked(validContextId)) {
                 return res.status(409).json({
                     success: false,
-                    message: 'Context is being used, please try again later'
+                    message: 'Context is being used, please try again later',
+                    error: 'Context is being used, please try again later'
                 });
             }
             
@@ -43,7 +46,8 @@ const mainController = {
                         message: 'Success', 
                         text: response.text,
                         timestamp: response.timestamp,
-                        contextId: validContextId
+                        contextId: validContextId,
+                        error: null
                     });
                 }
             } finally {
@@ -58,7 +62,8 @@ const mainController = {
             if (!res.headersSent) {
                 return res.status(500).json({ 
                     success: false, 
-                    message: `An error occurred: ${error.message}` 
+                    message: `An error occurred: ${error.message}`,
+                    error: error.message
                 });
             }
         }

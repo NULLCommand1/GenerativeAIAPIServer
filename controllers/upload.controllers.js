@@ -12,7 +12,8 @@ const uploadController = {
         if (contentLength > fileSizeLimitInBytes) {
             return res.status(400).json({
                 success: false,
-                message: `File size limit exceeded, please upload file less than ${FILE_SIZE_LIMIT}MB`
+                message: `File size limit exceeded, please upload file less than ${FILE_SIZE_LIMIT}MB`,
+                error: `File size limit exceeded, please upload file less than ${FILE_SIZE_LIMIT}MB`
             });
         }
 
@@ -30,7 +31,8 @@ const uploadController = {
                 if (!contextIdExists) {
                     return res.status(400).json({
                         success: false,
-                        message: 'Invalid context ID'
+                        message: 'Invalid context ID',
+                        error: 'Invalid context ID'
                     });
                 }
 
@@ -38,7 +40,8 @@ const uploadController = {
                 if (isLocked) {
                     return res.status(409).json({
                         success: false,
-                        message: 'Context is being used, please try again later'
+                        message: 'Context is being used, please try again later',
+                        error: 'Context is being used, please try again later'
                     });
                 }
                 
@@ -54,7 +57,8 @@ const uploadController = {
                 if (!result.success) {
                     return res.status(500).json({
                         success: false,
-                        message: 'Failed to upload file: ' + result.error
+                        message: 'Failed to upload file: ' + result.error,
+                        error: result.error
                     });
                 }
 
@@ -62,7 +66,8 @@ const uploadController = {
                     success: true,
                     message: 'Successfully uploaded file',
                     contextId: validContextId,
-                    timestamp: result.timestamp
+                    timestamp: result.timestamp,
+                    error: null
                 });
             } finally {
                 await contextLockService.releaseLock(validContextId);
@@ -74,7 +79,8 @@ const uploadController = {
             
             res.status(500).json({
                 success: false,
-                message: err.message
+                message: err.message,
+                error: err.message
             });
         }
     }

@@ -5,6 +5,7 @@ const { IP_ALWAYS_DATA, PORT_ALWAYS_DATA } = require('../constants/main.constant
 const mainRoutes = require('../routes/main.routes');
 const db = require('../models/db.models');
 const { errorHandlingMiddleware, expressJsonMiddleware } = require('../middlewares/main.middlewares');
+const path = require('path');
 
 function createServer() {
     const app = express();
@@ -12,6 +13,7 @@ function createServer() {
     app.use(timeout('180s'));
     app.use(cors());
     expressJsonMiddleware(app);
+    app.use('/files', express.static(path.join(__dirname, '../public')));
     app.use('/', mainRoutes);
     errorHandlingMiddleware(app);
     

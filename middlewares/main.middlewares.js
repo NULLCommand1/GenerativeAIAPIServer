@@ -5,7 +5,7 @@ const errorHandlingMiddleware = (app) => {
         if (err) {
             res.status(500).json({
                 success: false,
-                message: 'Internal Server Error',
+                message: 'Internal server error',
                 error: err.message
             });
         } else {
@@ -20,7 +20,7 @@ const expressJsonMiddleware = (app) => {
             try {
                 JSON.parse(buf);
             } catch (e) {
-                throw new Error('JSON Parse Error');
+                throw new Error('JSON parse error');
             }
         }
     }));
